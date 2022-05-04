@@ -13,16 +13,24 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public float rotationSpeed = 5f;
     [SerializeField] public float yawRate;
 
+    [Header("SHIP STATS")]
+    [SerializeField] public float HP = 10f;
+    [SerializeField] public float HPMax = 10f;
+    [SerializeField] public float Shield = 10;
+    [SerializeField] public float MaxShield = 10;
+
     [Header("INPUT VECTORS")]
     [SerializeField] Vector3 move;
     [SerializeField] Vector3 yaw;
     Rigidbody prb;
 
+    [Header("GUI ASSETS")]
+    [SerializeField] Slider hpslider;
+    [SerializeField] Slider shieldslider;
+
     [Header("VFX Control")]
-    [SerializeField]
-    VisualEffect thrusterVFX;
-    [SerializeField]
-    VisualEffect thrusterSparksVFX;
+    [SerializeField] VisualEffect thrusterVFX;
+    [SerializeField] VisualEffect thrusterSparksVFX;
     #endregion
 
     #region Start
@@ -44,6 +52,9 @@ public class PlayerController : MonoBehaviour
         #region Get Inputs
         //Get inputs from WASD and turn into a Vector3 (x, y, z)
         move = new Vector3(-Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+        hpslider.value = HP / HPMax;
+        shieldslider.value = Shield / MaxShield;
 
         //Resets yawRate when not needing yaw, left to physics
         yawRate = 0f;
@@ -81,7 +92,25 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
+    #region Take Damage and Die
+    //Take damage on hit from enemy rounds
+    public void TakeDamage(float damage)
+    {
+        HP -= damage;
+        hpslider.value = HP / HPMax;
 
+        if (HP <= 0)
+        {
+            Die();
+        }
+    }
+
+    //Destroy ship when HP is 0
+    void Die()
+    {
+        Destroy(gameObject);
+    }
+    #endregion
 
     #region FixedUpdate
     void FixedUpdate()
