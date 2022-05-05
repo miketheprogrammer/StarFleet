@@ -41,7 +41,8 @@ public class oEnemyAI : MonoBehaviour
 
     private void Start()
     {
-        startingPosition = transform.position;        
+        startingPosition = transform.position;
+        erb = GetComponent<Rigidbody>();
     }
 
     public void FixedUpdate()

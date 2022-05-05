@@ -20,8 +20,8 @@ public class ManageVfxVelocity : MonoBehaviour
     void FixedUpdate()
     {
         direction = (transform.position - positionLastFrame).normalized;
-        Debug.Log(transform.position);
-        Debug.Log(direction);
+        //Debug.Log(transform.position);
+        //Debug.Log(direction);
         velocity = Vector3.Distance(transform.position, positionLastFrame) / Time.fixedDeltaTime;
 
         effect.SetVector3("Velocity", direction * -velocity);

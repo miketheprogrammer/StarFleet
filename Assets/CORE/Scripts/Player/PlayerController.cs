@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.VFX;
-
-[RequireComponent(typeof(Rigidbody))]
-public class PlayerController : MonoBehaviour
+using Unity.Netcode;
+using Core.ShipComponents;
+public class PlayerController : NetworkBehaviour
 {
     #region Variables
     [Header("VARIABLES")]
@@ -13,7 +13,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public float rotationSpeed = 5f;
     [SerializeField] public float yawRate;
 
+    [Header("Ship")]
+    [SerializeField]
+    Chassis chassis;
     [Header("SHIP STATS")]
+
     [SerializeField] public float HP = 10f;
     [SerializeField] public float HPMax = 10f;
     [SerializeField] public float Shield = 10;
@@ -31,16 +35,13 @@ public class PlayerController : MonoBehaviour
     [Header("VFX Control")]
     [SerializeField] VisualEffect thrusterVFX;
     [SerializeField] VisualEffect thrusterSparksVFX;
+
     #endregion
 
 
     #region Start
     void Start()
     {
-        prb = GetComponent<Rigidbody>();
-        prb.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
-        prb.useGravity = false;
-        Camera.main.GetComponent<DollyCamera2D>().player = this.gameObject;
     }
     #endregion
 
@@ -51,6 +52,13 @@ public class PlayerController : MonoBehaviour
         {
             Application.Quit();
         }
+
+        if (this.NetworkObject.IsOwner == false)
+        {
+            // Do not process inputs because we are not the owner;
+            return;
+        }
+
         #region Get Inputs
         //Get inputs from WASD and turn into a Vector3 (x, y, z)
         move = new Vector3(-Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
@@ -79,16 +87,7 @@ public class PlayerController : MonoBehaviour
         #endregion
 
         #region Update VFX
-        if (Input.GetAxisRaw("Vertical") > 0.1)
-        {
-            thrusterVFX.SetFloat("Intensity", .5f);
-            thrusterSparksVFX.enabled = true;
-        } 
-        else
-        {
-            thrusterVFX.SetFloat("Intensity", 0f);
-            thrusterSparksVFX.enabled = false;
-        }
+
         #endregion
 
     }
@@ -117,11 +116,11 @@ public class PlayerController : MonoBehaviour
     #region FixedUpdate
     void FixedUpdate()
     {
+        prb = chassis.GetRigidbody();
         #region Make Ship Move
         //Move ship based on inputs and rotation based on yaw 
-        prb.AddRelativeForce(move.y * Vector3.right * velocity * Time.deltaTime);
-        prb.AddRelativeForce(move.x * Vector3.up * velocity * Time.deltaTime);
-        prb.AddTorque(yaw.z * Vector3.forward * rotationSpeed * Time.deltaTime);
+        chassis.cpu.ApplyThrust(move);
+        chassis.cpu.ApplyTorque(yaw.z);
         #endregion
 
         #region Apply Space Brakes
