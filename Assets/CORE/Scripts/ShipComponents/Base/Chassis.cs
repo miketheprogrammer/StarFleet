@@ -37,7 +37,7 @@ namespace Core.ShipComponents
 
         public Rigidbody GetRigidbody()
         {
-            Debug.Log("Trying to fetch rb from chassis");
+            //Debug.Log("Trying to fetch rb from chassis");
             return rb;
         }
 

@@ -103,6 +103,7 @@ namespace Core.ShipComponents
                     {
                         if (move.y > 0.01f)
                         {
+                            Debug.Log("Adding Relative Force: " + move.y * GetDirection() * force * Time.deltaTime);
                             rb.AddRelativeForce(move.y * GetDirection() * force * Time.deltaTime);
                             ActivateVFX();
                         }

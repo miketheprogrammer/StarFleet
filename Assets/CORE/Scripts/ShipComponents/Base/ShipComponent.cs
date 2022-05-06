@@ -6,7 +6,7 @@ namespace Core.ShipComponents
 {
     public class ShipComponent : MonoBehaviour
     {
-        protected Chassis chassis;
+        public Chassis chassis;
         // Start is called before the first frame update
         protected void Start()
         {
