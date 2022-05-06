@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - PlayerFriendly
+  - PlayerNotFriendly
   layers:
   - Default
   - TransparentFX
@@ -11,12 +13,12 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - PlayerProjectile
+  - GhostProjectile
+  - AIProjectile
+  - PlayerShip
+  - GhostShip
+  - AIShip
   - 
   - 
   - 

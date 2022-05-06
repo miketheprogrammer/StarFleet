@@ -50,7 +50,16 @@ namespace Core.ShipComponents
             }
             //Shooting Logic
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            Physics.IgnoreCollision(bullet.GetComponent<Collider>(), playerObject.GetComponent<Collider>(), true);
+
+            if (chassis.isOwner())
+            {
+                bullet.layer = LayerMask.NameToLayer("PlayerProjectile");
+            } else
+            {
+                bullet.layer = LayerMask.NameToLayer("GhostProjectile");
+            }
+            
+            //Physics.IgnoreCollision(bullet.GetComponent<Collider>(), playerObject.GetComponent<Collider>(), true);
             reloadSpeed = 0;
         }
 

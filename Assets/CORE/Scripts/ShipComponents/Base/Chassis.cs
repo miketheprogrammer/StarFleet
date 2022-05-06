@@ -16,6 +16,8 @@ namespace Core.ShipComponents
         public List<Thruster> thrusters;
 
         private NetworkObject networkObject;
+
+        public PlayerController pc;
         // Start is called before the first frame update
         void Start()
         {
@@ -27,6 +29,8 @@ namespace Core.ShipComponents
             }
             rb.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
             rb.useGravity = false;
+
+            networkObject = GetComponent<NetworkObject>();
         }
 
         // Update is called once per frame

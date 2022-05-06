@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3743246392957718722}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,7 +46,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3743246393263169442}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   - component: {fileID: 3743246393523351173}
   - component: {fileID: 3743246393523351171}
   - component: {fileID: 3743246393523351170}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -162,7 +162,7 @@ GameObject:
   - component: {fileID: 3743246393527427793}
   - component: {fileID: 3743246393527427792}
   - component: {fileID: 3743246393527427795}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3743246393881635445}
   - component: {fileID: 3743246393881635442}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: ShieldBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -353,7 +353,7 @@ GameObject:
   - component: {fileID: 3743246393917458165}
   - component: {fileID: 3743246393917458163}
   - component: {fileID: 3743246393917458162}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -429,7 +429,7 @@ GameObject:
   - component: {fileID: 3743246394151799044}
   - component: {fileID: 3743246394151799042}
   - component: {fileID: 3743246394151799045}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -507,7 +507,7 @@ GameObject:
   - component: {fileID: 3743246394714469475}
   - component: {fileID: 3743246394714469472}
   - component: {fileID: 7039580535532932308}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: oEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -623,12 +623,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9645958ce6c090d4b86fb0fe258bf393, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  velocity: 25
+  rotationSpeed: 15
   HP: 10
   MaxHP: 10
   Shield: 10
   MaxShield: 10
   slider: {fileID: 3743246394751426865}
   shieldslider: {fileID: 3743246393881635442}
+  waitingState: 0
+  roamingState: 0
+  attackingState: 0
+  timerClock: 0
+  resetTime: 60
+  startingPosition: {x: 0, y: 0, z: 0}
+  roamingPosition: {x: 0, y: 0, z: 0}
+  targetPosition: {x: 0, y: 0, z: 0}
+  erb: {fileID: 0}
 --- !u!1 &3743246394751426864
 GameObject:
   m_ObjectHideFlags: 0
@@ -639,7 +650,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3743246394751426830}
   - component: {fileID: 3743246394751426865}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -730,7 +741,7 @@ GameObject:
   - component: {fileID: 3743246394804897059}
   - component: {fileID: 3743246394804897057}
   - component: {fileID: 3743246394804897056}
-  m_Layer: 5
+  m_Layer: 11
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}

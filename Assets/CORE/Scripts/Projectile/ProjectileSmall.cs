@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Core.ShipComponents;
 public class ProjectileSmall : MonoBehaviour
 {
     //Bullet
@@ -24,10 +24,18 @@ public class ProjectileSmall : MonoBehaviour
     private void OnTriggerEnter(Collider hitInfo)
     {
         Debug.Log(hitInfo.name);
-        oEnemyAI enemy = hitInfo.GetComponent<oEnemyAI>();
+
+        oEnemyAI enemy;
+        hitInfo.TryGetComponent<oEnemyAI>(out enemy);
         if (enemy != null)
         {
             enemy.TakeDamage(damage);
+        }
+        Chassis chassis;
+        hitInfo.TryGetComponent<Chassis> (out chassis);
+        if (chassis != null)
+        {
+            chassis.pc.TakeDamage(damage);
         }
         Destroy(gameObject);
     }

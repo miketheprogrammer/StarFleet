@@ -7723,6 +7723,10 @@ MonoBehaviour:
   thrusterVFX: {fileID: 1905480475}
   thrusterSparksVFX: {fileID: 1845873}
   ShipToSpawn: {fileID: 0}
+  ChassisNetworkId:
+    m_InternalValue: 0
+  Fire0:
+    m_InternalValue: 0
 --- !u!65 &850869746
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13935,7 +13939,7 @@ MonoBehaviour:
   ConnectionData:
     Address: 127.0.0.1
     Port: 7777
-    ServerListenAddress: 127.0.0.1
+    ServerListenAddress: 0.0.0.0
   DebugSimulator:
     PacketDelayMS: 0
     PacketJitterMS: 0

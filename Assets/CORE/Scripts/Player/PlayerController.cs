@@ -130,6 +130,18 @@ public class PlayerController : NetworkBehaviour
         {
             AquireShip(ChassisNetworkId.Value);
         }
+        if (chassis != null)
+        {
+            chassis.pc = this;
+            if (NetworkObject.IsOwner)
+            {
+                chassis.gameObject.layer = LayerMask.NameToLayer("PlayerShip");
+            } else
+            {
+                chassis.gameObject.layer = LayerMask.NameToLayer("GhostShip");
+            }
+            
+        }
 
         if (NetworkObject.IsOwner && chassis != null)
         {
@@ -189,6 +201,12 @@ public class PlayerController : NetworkBehaviour
                 Fire0.Value = false;
             }
 
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                //chassis.GetComponent<SpriteRenderer>().enabled = true;
+                //HP = 20;
+            }
+
             SendNetworkedInputsToServerServerRpc(networkedInputs);
         }
 
@@ -200,7 +218,7 @@ public class PlayerController : NetworkBehaviour
     public void TakeDamage(float damage)
     {
         HP -= damage;
-        hpslider.value = HP / HPMax;
+        //hpslider.value = HP / HPMax;
 
         if (HP <= 0)
         {
@@ -211,7 +229,8 @@ public class PlayerController : NetworkBehaviour
     //Destroy ship when HP is 0
     void Die()
     {
-        Destroy(gameObject);
+        // chassis.GetComponent<SpriteRenderer>().enabled = false;
+        Destroy(chassis.gameObject);
     }
     #endregion
 
