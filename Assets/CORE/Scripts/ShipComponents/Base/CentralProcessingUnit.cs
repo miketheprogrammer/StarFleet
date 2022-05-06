@@ -14,7 +14,7 @@ namespace Core.ShipComponents
 
         public void ApplyThrust(Vector2 move)
         {
-            Debug.Log("_________________________________________");
+            //Debug.Log("_________________________________________");
             chassis.thrusters.FindAll((Thruster t) => t.thrusterType != ThrusterType.Rotational).ForEach((Thruster thruster) =>
             {
                 thruster.Activate(move);

@@ -65,7 +65,25 @@ public class PlayerController : NetworkBehaviour
     PlayerControllerNetworkedInputs networkedInputs = new PlayerControllerNetworkedInputs();
 
     private DollyCamera2D dollyCamera;
+
+
+    public NetworkVariable<ulong> ChassisNetworkId = new NetworkVariable<ulong>();
+    public NetworkVariable<bool> Fire0 = new NetworkVariable<bool>(
+        default,
+        NetworkVariableBase.DefaultReadPerm, // Everyone
+        NetworkVariableWritePermission.Owner);
+
+
     #endregion
+
+    public void OnChassisNetworkIdChanged(ulong previous, ulong current)
+    {
+        AquireShip(current);
+    }
+
+    public void OnFire0Changed(bool previous, bool current)
+    {
+    }
 
 
     #region Start
@@ -81,19 +99,36 @@ public class PlayerController : NetworkBehaviour
         {
             RequestShipSpawnServerRpc();
         }
+        ChassisNetworkId.OnValueChanged += OnChassisNetworkIdChanged;
+        Fire0.OnValueChanged += OnFire0Changed;
+        AquireShip(ChassisNetworkId.Value);
     }
 
     public override void OnNetworkDespawn()
     {
         base.OnNetworkDespawn();
+        ChassisNetworkId.OnValueChanged -= OnChassisNetworkIdChanged;
+        Fire0.OnValueChanged -= OnFire0Changed;
     }
 
     #region Update
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
         if (NetworkObject.NetworkManager.IsHost || NetworkObject.NetworkManager.IsServer)
         {
             SendNetworkedInputsToClientClientRpc(networkedInputs);
+        }
+
+        //Debug.Log("chassisNetworkId : " + ChassisNetworkId.Value + " : Expected Id : " + (chassis != null ? chassis.GetComponent<NetworkObject>().NetworkObjectId : -10) + " : " + "For PlayerController " + NetworkObject.NetworkObjectId);
+
+        if (chassis == null)
+        {
+            AquireShip(ChassisNetworkId.Value);
         }
 
         if (NetworkObject.IsOwner && chassis != null)
@@ -104,11 +139,8 @@ public class PlayerController : NetworkBehaviour
             }
             // Ensure Camera is always following the chassis
             dollyCamera.player = chassis.gameObject;
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Application.Quit();
-            }
 
+           
             if (this.NetworkObject.IsOwner == false)
             {
                 // Do not process inputs because we are not the owner;
@@ -151,10 +183,10 @@ public class PlayerController : NetworkBehaviour
             networkedInputs.YawDirection = yawRate;
             if (Input.GetMouseButton(0))
             {
-                networkedInputs.firing = true;
+                Fire0.Value = true;
             } else
             {
-                networkedInputs.firing = false;
+                Fire0.Value = false;
             }
 
             SendNetworkedInputsToServerServerRpc(networkedInputs);
@@ -191,11 +223,11 @@ public class PlayerController : NetworkBehaviour
             return;
         }
         prb = chassis.GetRigidbody();
-        if (NetworkObject.IsOwner)
-        {
+       // if (NetworkObject.IsOwner)
+        //{
             #region Make Ship Move
             //Move ship based on inputs and rotation based on yaw 
-            Debug.Log("Apply Thrust " + networkedInputs.Move.ToString());
+            Debug.Log("Apply Thrust " + NetworkObject.NetworkObjectId);
             chassis.cpu.ApplyThrust(networkedInputs.Move);
             chassis.cpu.ApplyTorque(networkedInputs.YawDirection);
             #endregion
@@ -216,9 +248,9 @@ public class PlayerController : NetworkBehaviour
 
             //Vector2 direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
             chassis.cpu.ApplyTurretRotation(networkedInputs.MouseWorldCoordiates);
-        }
+        //}
 
-        if (networkedInputs.firing)
+        if (Fire0.Value)
         {
             chassis.cpu.FireHardpoints();
         }
@@ -250,26 +282,33 @@ public class PlayerController : NetworkBehaviour
         //go.GetComponent<NetworkObject>().ChangeOwnership(serverRpcParams.Receive.SenderClientId);
         go.GetComponent<NetworkObject>().SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
         chassis = go.GetComponent<Chassis>();
-        AquireShipClientRpc(serverRpcParams.Receive.SenderClientId, go.GetComponent<NetworkObject>().NetworkObjectId);
+        ChassisNetworkId.Value = chassis.GetComponent<NetworkObject>().NetworkObjectId;
+        //AquireShipClientRpc(serverRpcParams.Receive.SenderClientId, go.GetComponent<NetworkObject>().NetworkObjectId);
+    }
+
+
+    private void AquireShip(ulong networkObjectId)
+    {
+        Debug.Log("Trying to aquire ship : " + networkObjectId + " from controller " + NetworkObject.NetworkObjectId);
+        NetworkObject[] potentials = FindObjectsOfType<NetworkObject>();
+        for (int i = 0; i < potentials.Length; i += 1)
+        {
+            if (potentials[i].NetworkObjectId == networkObjectId)
+            {
+                chassis = potentials[i].GetComponent<Chassis>();
+                Debug.Log("Successfully aquired ship " + networkObjectId);
+                return;
+            }
+        }
     }
 
     [ClientRpc]
     void AquireShipClientRpc(ulong clientId, ulong networkObjectId)
     {
-        
         if (NetworkObject.NetworkManager.LocalClientId == clientId)
         {
             Debug.Log("Trying to aquire ship : " + networkObjectId + " : for clientId : " + clientId);
-            NetworkObject[] potentials = FindObjectsOfType<NetworkObject>();
-            for (int i = 0; i < potentials.Length; i += 1)
-            {
-                if (potentials[i].NetworkObjectId == networkObjectId)
-                {
-                    chassis = potentials[i].GetComponent<Chassis>();
-                    Debug.Log("Successfully aquired ship");
-                    return;
-                }
-            }
+            AquireShip(networkObjectId);
         }
         Debug.Log("Failed to aquire ship");
     }

@@ -83,12 +83,12 @@ namespace Core.ShipComponents
 
         private void ActivateVFX()
         {
-            Debug.Log("Activatign Thruster VFX : " + gameObject.name);
+            //Debug.Log("Activatign Thruster VFX : " + gameObject.name);
             thrusterVFX.SetFloat("Intensity", vfxIntensity);
         }
         private void DeactivateVFX()
         {
-            Debug.Log("Deactivatign Thruster VFX : " + gameObject.name);
+           // Debug.Log("Deactivatign Thruster VFX : " + gameObject.name);
             thrusterVFX.SetFloat("Intensity", vfxLowIntensity);
         }
 
@@ -103,7 +103,7 @@ namespace Core.ShipComponents
                     {
                         if (move.y > 0.01f)
                         {
-                            Debug.Log("Adding Relative Force: " + move.y * GetDirection() * force * Time.deltaTime);
+                            //Debug.Log("Adding Relative Force: " + move.y * GetDirection() * force * Time.deltaTime);
                             rb.AddRelativeForce(move.y * GetDirection() * force * Time.deltaTime);
                             ActivateVFX();
                         }
