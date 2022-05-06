@@ -22,6 +22,11 @@ namespace Core.ShipComponents
         [SerializeField] public float reloadTime = 10;
         [SerializeField] public float ammoCount = 20;
 
+        [SerializeField] public int GroupID = 0;
+
+        [SerializeField]
+        FMODUnity.EventReference fireSFX;
+
         public bool IsTurret()
         {
             return hardpointType == HardpointType.Turret;
@@ -50,6 +55,7 @@ namespace Core.ShipComponents
             }
             //Shooting Logic
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+            FMODUnity.RuntimeManager.PlayOneShotAttached(fireSFX.Guid, this.gameObject);
 
             if (chassis.isOwner())
             {

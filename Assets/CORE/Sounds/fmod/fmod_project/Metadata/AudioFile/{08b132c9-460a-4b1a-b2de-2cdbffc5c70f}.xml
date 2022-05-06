@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{08b132c9-460a-4b1a-b2de-2cdbffc5c70f}">
+		<property name="assetPath">
+			<value>Engine Low LFO.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>10</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{294989be-65d9-48eb-be45-f3ee01bb6923}</destination>
+		</relationship>
+	</object>
+</objects>

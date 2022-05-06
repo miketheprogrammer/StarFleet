@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
-
+using FMODUnity;
 namespace Core.ShipComponents
 {
     public enum ThrusterType
@@ -13,6 +13,7 @@ namespace Core.ShipComponents
         ManeuveringPort,
         Rotational,
     }
+
     public class Thruster : ShipComponent
     {
         public Rigidbody rb;
@@ -36,6 +37,9 @@ namespace Core.ShipComponents
         [SerializeField] VisualEffect thrusterVFX;
         [SerializeField] VisualEffect thrusterSparksVFX;
 
+        [Header("VFX Control")]
+        [SerializeField] FMODUnity.StudioEventEmitter thrusterSFX;
+        [SerializeField] [Range(0,1)] float thrusterSFXIntensity = 0f;
         //private Vector3 Yaw = new Vector3(0, 0, 1);
 
         public void EnsureReferences()
@@ -52,6 +56,8 @@ namespace Core.ShipComponents
                     rb = chassis.GetRigidbody();
                 }
             }
+
+
         }
 
         private void Update()
@@ -85,11 +91,19 @@ namespace Core.ShipComponents
         {
             //Debug.Log("Activatign Thruster VFX : " + gameObject.name);
             thrusterVFX.SetFloat("Intensity", vfxIntensity);
+            if (thrusterSFX != null)
+            {
+                thrusterSFX.SetParameter("Intensity", thrusterSFXIntensity);
+            }
         }
         private void DeactivateVFX()
         {
            // Debug.Log("Deactivatign Thruster VFX : " + gameObject.name);
             thrusterVFX.SetFloat("Intensity", vfxLowIntensity);
+            if (thrusterSFX != null)
+            {
+                thrusterSFX.SetParameter("Intensity", 0f);
+            }
         }
 
         public void Activate(Vector2 move)

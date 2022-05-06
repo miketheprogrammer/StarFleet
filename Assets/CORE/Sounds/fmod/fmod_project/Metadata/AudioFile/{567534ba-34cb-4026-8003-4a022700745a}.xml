@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{567534ba-34cb-4026-8003-4a022700745a}">
+		<property name="assetPath">
+			<value>18. Luminescence.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>483.05632653061224</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{294989be-65d9-48eb-be45-f3ee01bb6923}</destination>
+		</relationship>
+	</object>
+</objects>

@@ -73,6 +73,12 @@ public class PlayerController : NetworkBehaviour
         NetworkVariableBase.DefaultReadPerm, // Everyone
         NetworkVariableWritePermission.Owner);
 
+    public NetworkVariable<bool> Fire1 = new NetworkVariable<bool>(
+        default,
+        NetworkVariableBase.DefaultReadPerm, // Everyone
+        NetworkVariableWritePermission.Owner);
+
+
 
     #endregion
 
@@ -201,6 +207,16 @@ public class PlayerController : NetworkBehaviour
                 Fire0.Value = false;
             }
 
+            if (Input.GetMouseButton(1))
+            {
+                Fire1.Value = true;
+            }
+            else
+            {
+                Fire1.Value = false;
+            }
+
+
             if (Input.GetKeyDown(KeyCode.R))
             {
                 //chassis.GetComponent<SpriteRenderer>().enabled = true;
@@ -271,7 +287,12 @@ public class PlayerController : NetworkBehaviour
 
         if (Fire0.Value)
         {
-            chassis.cpu.FireHardpoints();
+            chassis.cpu.FireHardpoints(0);
+        }
+
+        if (Fire1.Value)
+        {
+            chassis.cpu.FireHardpoints(1);
         }
 
     }

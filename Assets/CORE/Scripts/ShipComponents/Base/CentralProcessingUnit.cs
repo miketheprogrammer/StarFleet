@@ -45,5 +45,13 @@ namespace Core.ShipComponents
                 h.Shoot();
             });
         }
+
+        public void FireHardpoints(int group)
+        {
+            chassis.hardpoints.FindAll((Hardpoint h) => h.GroupID == group).ForEach((Hardpoint h) =>
+            {
+                h.Shoot();
+            });
+        }
     }
 }

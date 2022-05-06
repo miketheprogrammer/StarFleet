@@ -37,6 +37,14 @@ public class ProjectileSmall : MonoBehaviour
         {
             chassis.pc.TakeDamage(damage);
         }
+
+        ShieldEmitter shieldEmitter;
+        hitInfo.TryGetComponent<ShieldEmitter>(out shieldEmitter);
+        if (shieldEmitter != null)
+        {
+            shieldEmitter.TakeDamage(damage);
+        }
+
         Destroy(gameObject);
     }
 
