@@ -36,6 +36,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] VisualEffect thrusterVFX;
     [SerializeField] VisualEffect thrusterSparksVFX;
 
+    private DollyCamera2D dollyCamera;
     #endregion
 
 
@@ -48,6 +49,12 @@ public class PlayerController : NetworkBehaviour
     #region Update
     private void Update()
     {
+        if (dollyCamera == null)
+        {
+            dollyCamera = Camera.main.GetComponent<DollyCamera2D>();
+        }
+        // Ensure Camera is always following the chassis
+        dollyCamera.player = chassis.gameObject;
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
