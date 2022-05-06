@@ -58,7 +58,10 @@ public class DollyCamera2D : MonoBehaviour
 
         if (focusStrategy == CameraFocusStrategy.SingleTargetFocusFollow)
         {
-            Camera.main.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, Camera.main.transform.position.z);
+            if (player != null)
+            {
+                Camera.main.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, Camera.main.transform.position.z);
+            }
             return;
         }
 
