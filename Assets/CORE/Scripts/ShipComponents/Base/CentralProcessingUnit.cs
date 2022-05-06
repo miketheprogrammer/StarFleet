@@ -29,11 +29,12 @@ namespace Core.ShipComponents
             });
         }
 
-        public void ApplyTurretRotation(Vector2 direction)
+        public void ApplyTurretRotation(Vector3 WorldPointAt)
         {
             chassis.hardpoints.FindAll((Hardpoint h) => h.hardpointType == HardpointType.Turret).ForEach((Hardpoint h) =>
             {
-               (h as TurretController).Rotate(direction);
+                Vector2 direction = WorldPointAt - h.transform.position;
+               (h as TurretController).Rotate(direction.normalized);
             });
         }
 

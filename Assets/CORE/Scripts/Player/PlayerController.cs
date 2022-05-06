@@ -137,8 +137,8 @@ public class PlayerController : NetworkBehaviour
         }
         #endregion
 
-        Vector2 direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        chassis.cpu.ApplyTurretRotation(direction);
+        //Vector2 direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        chassis.cpu.ApplyTurretRotation(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         if (Input.GetMouseButton(0))
         {
             chassis.cpu.FireHardpoints();
