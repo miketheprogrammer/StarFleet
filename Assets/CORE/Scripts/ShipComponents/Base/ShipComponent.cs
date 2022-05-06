@@ -6,16 +6,24 @@ namespace Core.ShipComponents
 {
     public class ShipComponent : MonoBehaviour
     {
+        protected Chassis chassis;
         // Start is called before the first frame update
-        void Start()
+        protected void Start()
         {
-
+            EnsureReferences();
         }
 
-        // Update is called once per frame
-        void Update()
+        protected void EnsureReferences()
         {
+            if (chassis == null)
+            {
+                chassis = transform.parent.parent.gameObject.GetComponent<Chassis>();
+            }
+        }
 
+        protected void Update()
+        {
+            EnsureReferences();
         }
     }
 }

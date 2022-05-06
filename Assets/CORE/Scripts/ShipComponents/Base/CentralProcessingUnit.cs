@@ -6,18 +6,6 @@ namespace Core.ShipComponents
 {
     public class CentralProcessingUnit : ShipComponent
     {
-        Chassis chassis;
-
-        
-        public void Start()
-        {
-            chassis = transform.parent.parent.gameObject.GetComponent<Chassis>();
-        }
-
-        private void EnsureReferences()
-        {
-
-        }
 
         public void ReceiveMessage()
         {
@@ -38,6 +26,22 @@ namespace Core.ShipComponents
             chassis.thrusters.FindAll((Thruster t) => t.thrusterType == ThrusterType.Rotational).ForEach((Thruster thruster) =>
             {
                 thruster.Activate(yawDirection);
+            });
+        }
+
+        public void ApplyTurretRotation(Vector2 direction)
+        {
+            chassis.hardpoints.FindAll((Hardpoint h) => h.hardpointType == HardpointType.Turret).ForEach((Hardpoint h) =>
+            {
+               (h as TurretController).Rotate(direction);
+            });
+        }
+
+        public void FireHardpoints()
+        {
+            chassis.hardpoints.ForEach((Hardpoint h) =>
+            {
+                h.Shoot();
             });
         }
     }

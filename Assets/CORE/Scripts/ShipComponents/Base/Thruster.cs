@@ -15,7 +15,6 @@ namespace Core.ShipComponents
     }
     public class Thruster : ShipComponent
     {
-        Chassis chassis;
         public Rigidbody rb;
 
         [SerializeField]

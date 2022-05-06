@@ -32,6 +32,7 @@ namespace Core.ShipComponents
         // Update is called once per frame
         void Update()
         {
+            // Do not call the base
         }
 
         public Rigidbody GetRigidbody()

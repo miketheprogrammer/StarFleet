@@ -136,6 +136,14 @@ public class PlayerController : NetworkBehaviour
             prb.angularDrag = 1;
         }
         #endregion
+
+        Vector2 direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        chassis.cpu.ApplyTurretRotation(direction);
+        if (Input.GetMouseButton(0))
+        {
+            chassis.cpu.FireHardpoints();
+        }
+        
     }
     #endregion
 }
