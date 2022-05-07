@@ -117,7 +117,6 @@ public class PlayerController : NetworkBehaviour
         Fire0.OnValueChanged -= OnFire0Changed;
     }
 
-    #region Update
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -217,38 +216,17 @@ public class PlayerController : NetworkBehaviour
             }
 
 
-            if (Input.GetKeyDown(KeyCode.R))
+           
+
+            if (Input.GetKeyDown(KeyCode.Backspace))
             {
-                //chassis.GetComponent<SpriteRenderer>().enabled = true;
-                //HP = 20;
+                chassis.Die();
             }
 
             SendNetworkedInputsToServerServerRpc(networkedInputs);
         }
 
     }
-    #endregion
-
-    #region Take Damage and Die
-    //Take damage on hit from enemy rounds
-    public void TakeDamage(float damage)
-    {
-        HP -= damage;
-        //hpslider.value = HP / HPMax;
-
-        if (HP <= 0)
-        {
-            Die();
-        }
-    }
-
-    //Destroy ship when HP is 0
-    void Die()
-    {
-        // chassis.GetComponent<SpriteRenderer>().enabled = false;
-        Destroy(chassis.gameObject);
-    }
-    #endregion
 
     #region FixedUpdate
     void FixedUpdate()

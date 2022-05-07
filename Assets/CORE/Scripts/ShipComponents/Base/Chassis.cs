@@ -8,6 +8,8 @@ namespace Core.ShipComponents
     {
         public Rigidbody rb;
 
+        public GameObject ComponentsContainer;
+
         public List<Hardpoint> hardpoints;
         public CentralProcessingUnit cpu;
         public QuantumDrive quantumDrive;
@@ -17,7 +19,19 @@ namespace Core.ShipComponents
 
         private NetworkObject networkObject;
 
+        [Header("SHIP STATS")]
+
+        [SerializeField] public float HP = 100f;
+        [SerializeField] public float HPMax = 100f;
+
+        [Header("SHIP STATS -- DO NOT MODIFY")]
+        [SerializeField] private float Shield = 10;
+        [SerializeField] private float MaxShield = 10;
+
         public PlayerController pc;
+
+
+        public GameObject Explosion;
         // Start is called before the first frame update
         void Start()
         {
@@ -37,6 +51,52 @@ namespace Core.ShipComponents
         void Update()
         {
             // Do not call the base
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                //   chassis.gameObject.SetActive(true);
+                Resurrect();
+            }
+        }
+
+        public void TakeDamage(float damage)
+        {
+            HP -= damage;
+            Debug.Log("Chassis took : " + damage + " damage, and has " + HP + " left");
+            //hpslider.value = HP / HPMax;
+
+            if (HP <= 0)
+            {
+                Die();
+            }
+        }
+
+        public void Die()
+        {
+            if (Explosion != null)
+            {
+                Explosion.SetActive(true);
+            }
+            //gameObject.SetActive(false);
+            GetComponent<SpriteRenderer>().enabled = false;
+            ComponentsContainer.SetActive(false);
+
+            //Destroy(chassis.gameObject);
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        public void Resurrect()
+        {
+            GetComponent<SpriteRenderer>().enabled = true;
+            ComponentsContainer.SetActive(true);
+            Explosion.SetActive(false);
+            Repair();
+        }
+
+        public void Repair()
+        {
+            HP = HPMax;
         }
 
         public Rigidbody GetRigidbody()

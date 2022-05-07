@@ -31,17 +31,12 @@ public class ProjectileSmall : MonoBehaviour
         {
             enemy.TakeDamage(damage);
         }
-        Chassis chassis;
-        hitInfo.TryGetComponent<Chassis> (out chassis);
-        if (chassis != null)
-        {
-            chassis.pc.TakeDamage(damage);
-        }
 
         ShieldEmitter shieldEmitter;
         hitInfo.TryGetComponent<ShieldEmitter>(out shieldEmitter);
         if (shieldEmitter != null)
         {
+            // The shield emitter will delegate damage to the chassis
             shieldEmitter.TakeDamage(damage);
         }
 
