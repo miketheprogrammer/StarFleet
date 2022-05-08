@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//A part of the CORE-SHIPCOMPONENTS class
 namespace Core.ShipComponents
 {
+
+    //Component Type TurretController is Hardpoint
     public class TurretController : Hardpoint
     {
-        #region Variables
         [Header("Turret Rotation")]
         [SerializeField] public float rotationSpeed = 5f;
 
@@ -17,9 +20,7 @@ namespace Core.ShipComponents
             transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
 
         }
-        #endregion
     }
 }
 
 //CODE BY GRVBBS & HERNANDEZ
-//2022 MAGKORE GAME STUDIOS

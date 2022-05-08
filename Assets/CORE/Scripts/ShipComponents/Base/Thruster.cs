@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
 using FMODUnity;
+
+
+
+//A part of the CORE-SHIPCOMPONENTS class
 namespace Core.ShipComponents
 {
+
+    //Types of thrusters
     public enum ThrusterType
     {
         Forward,
@@ -14,41 +20,65 @@ namespace Core.ShipComponents
         Rotational,
     }
 
+
+    //Component Type Thruster is ShipComponent
     public class Thruster : ShipComponent
     {
+        //Get Rigid Body of Ship
         public Rigidbody rb;
-
+        //Type of thruster
         [SerializeField]
         public ThrusterType thrusterType = ThrusterType.Forward;
+        //How much force
         [SerializeField]
         float force = 5f;
+        //Burn Modifier
         [SerializeField]
         float burnModifier = 10f;
+        //Yaw Force
         [SerializeField]
         float yawForce = 20f;
+        //VFX for thruster at max input
         [SerializeField]
         [Range(0,1)]
         float vfxIntensity = .5f;
+        //VFX for thruster at min input
         [SerializeField]
         [Range(0,1)]
         float vfxLowIntensity = 0f;
 
-        [Header("VFX Control")]
-        [SerializeField] VisualEffect thrusterVFX;
-        [SerializeField] VisualEffect thrusterSparksVFX;
 
+        //Types of VFX for thruster
         [Header("VFX Control")]
-        [SerializeField] FMODUnity.StudioEventEmitter thrusterSFX;
-        [SerializeField] [Range(0,1)] float thrusterSFXIntensity = 0f;
+        [SerializeField] 
+        VisualEffect thrusterVFX;
+        [SerializeField] 
+        VisualEffect thrusterSparksVFX;
+
+        //Thruster Sound Effects
+        [Header("SFX Control")]
+        [SerializeField] 
+        FMODUnity.StudioEventEmitter thrusterSFX;
+
+        //thruster on or off
+        [SerializeField] 
+        [Range(0,1)] 
+        float thrusterSFXIntensity = 0f;
+
         //private Vector3 Yaw = new Vector3(0, 0, 1);
 
+
+
+        //Ensure References function
         public void EnsureReferences()
         {
+            //if chassis is null set the chassis to the parents chassis type
             if (chassis == null)
             {
                 chassis = transform.parent.parent.gameObject.GetComponent<Chassis>();
             }
 
+            //if rigid body is null and chassis is not null set rigid body to chassis rigid body
             if (rb == null)
             {
                 if (chassis != null)
@@ -56,17 +86,21 @@ namespace Core.ShipComponents
                     rb = chassis.GetRigidbody();
                 }
             }
-
-
         }
 
+
+        //Update 
         private void Update()
         {
             EnsureReferences();
         }
 
+
+        //Get Direction Function
         private Vector3 GetDirection()
         {
+
+            //get input value based on direction of thruster
             if (thrusterType == ThrusterType.Forward)
             {
                 return Vector3.right;
@@ -84,9 +118,11 @@ namespace Core.ShipComponents
                 return Vector3.up;
             }
 
+            //reset
             return Vector3.zero;
         }
 
+        //Activate VFX function
         private void ActivateVFX()
         {
             //Debug.Log("Activatign Thruster VFX : " + gameObject.name);
@@ -96,6 +132,8 @@ namespace Core.ShipComponents
                 thrusterSFX.SetParameter("Intensity", thrusterSFXIntensity);
             }
         }
+
+        //Deactivate VFX function
         private void DeactivateVFX()
         {
            // Debug.Log("Deactivatign Thruster VFX : " + gameObject.name);
@@ -106,6 +144,7 @@ namespace Core.ShipComponents
             }
         }
 
+        //Activate thruster based on the object based on force
         public void Activate(Vector2 move)
         {
             EnsureReferences();
@@ -170,6 +209,8 @@ namespace Core.ShipComponents
             }
         }
 
+
+        //Activate yaw thruster when yaw input is applied
         public void Activate(float yawDirection)
         {
             EnsureReferences();

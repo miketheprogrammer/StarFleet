@@ -7,14 +7,18 @@ using Unity.Netcode;
 using Core.ShipComponents;
 
 
+
+//PlayerController Network inputs using INetwork Serializable
 struct PlayerControllerNetworkedInputs : INetworkSerializable
 {
+    //Get public vectors for move and mouse world coords, yaw and firing yes or no
     public Vector2 Move; // 0, 0
     public Vector3 MouseWorldCoordiates; // 0,0,0
     public float YawDirection; // -1 or 1 or 0;
     public bool firing;
 
     // INetworkSerializable
+    //serialize the inputs or all those inputs
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         serializer.SerializeValue(ref Move);
@@ -23,51 +27,65 @@ struct PlayerControllerNetworkedInputs : INetworkSerializable
         serializer.SerializeValue(ref firing);
 
     }
-    // ~INetworkSerializable
 }
 
+
+//Component Type PlayerController is NetworkBehaviour
 public class PlayerController : NetworkBehaviour
 {
-    #region Variables
     [Header("VARIABLES")]
-    [SerializeField] public float velocity = 5f;
-    [SerializeField] public float rotationSpeed = 5f;
-    [SerializeField] public float yawRate;
+    [SerializeField]
+    public float velocity = 5f;
+    [SerializeField]
+    public float rotationSpeed = 5f;
+    [SerializeField]
+    public float yawRate;
 
     [Header("Ship")]
     [SerializeField]
     Chassis chassis;
-    [Header("SHIP STATS")]
 
-    [SerializeField] public float HP = 10f;
-    [SerializeField] public float HPMax = 10f;
-    [SerializeField] public float Shield = 10;
-    [SerializeField] public float MaxShield = 10;
+    [Header("SHIP STATS")]
+    [SerializeField] 
+    public float HP = 10f;
+    [SerializeField] 
+    public float HPMax = 10f;
+    [SerializeField] 
+    public float Shield = 10;
+    [SerializeField] 
+    public float MaxShield = 10;
 
     [Header("INPUT VECTORS")]
-    [SerializeField] Vector3 move;
-    [SerializeField] Vector3 yaw;
+    [SerializeField] 
+    Vector3 move;
+    [SerializeField] 
+    Vector3 yaw;
     Rigidbody prb;
 
     [Header("GUI ASSETS")]
-    [SerializeField] Slider hpslider;
-    [SerializeField] Slider shieldslider;
+    [SerializeField]
+    Slider hpslider;
+    [SerializeField]
+    Slider shieldslider;
 
     [Header("VFX Control")]
-    [SerializeField] VisualEffect thrusterVFX;
-    [SerializeField] VisualEffect thrusterSparksVFX;
+    [SerializeField]
+    VisualEffect thrusterVFX;
+    [SerializeField]
+    VisualEffect thrusterSparksVFX;
 
     [Header("Ship Spawn Debug")]
-    [SerializeField] GameObject ShipToSpawn;
+    [SerializeField]
+    GameObject ShipToSpawn;
 
-    //
+
     //NetworkVariables
     PlayerControllerNetworkedInputs networkedInputs = new PlayerControllerNetworkedInputs();
 
     private DollyCamera2D dollyCamera;
 
-
     public NetworkVariable<ulong> ChassisNetworkId = new NetworkVariable<ulong>();
+
     public NetworkVariable<bool> Fire0 = new NetworkVariable<bool>(
         default,
         NetworkVariableBase.DefaultReadPerm, // Everyone
@@ -78,9 +96,6 @@ public class PlayerController : NetworkBehaviour
         NetworkVariableBase.DefaultReadPerm, // Everyone
         NetworkVariableWritePermission.Owner);
 
-
-
-    #endregion
 
     public void OnChassisNetworkIdChanged(ulong previous, ulong current)
     {

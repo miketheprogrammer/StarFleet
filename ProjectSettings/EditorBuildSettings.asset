@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/CORE/Scenes/MainScenes/GrvbbsSampleScene.unity
     guid: cb2200fa50b12984a9174f5b20ed8560
+  - enabled: 1
+    path: Assets/CORE/Scenes/MainScenes/GrvbbsScene.unity
+    guid: b8e4017e5a698fd479849a843bb8131b
   m_configObjects: {}

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DollyCamera2D : MonoBehaviour
 {
+    //Focus Strategy Types
     public enum CameraFocusStrategy
     {
         SingleTargetFocusCenterReset,
@@ -14,48 +15,64 @@ public class DollyCamera2D : MonoBehaviour
         MultiTargetFocusDeadZoneMaintain,
         MultiTargetFieldMaintain,
     }
+
+
+//Variables
+
+    [Header("VFX Control")]
+    //Max Zoom
     [SerializeField]
     float maxZoom = 5;
+    //Min Zoom
     [SerializeField]
     float minZoom = 1;
-
+    //GameObject targets, is 0
     [SerializeField]
     GameObject[] targets;
-
+    //Player game object select field
     [SerializeField]
     public GameObject player;
-
+    //screen Dead zone
     [SerializeField]
     Vector2 screenDeadZone = new Vector2(.2f, .2f);
-
+    //Select Type of class based on enum types
     [SerializeField]
     CameraFocusStrategy focusStrategy = CameraFocusStrategy.SingleTargetFocusCenterReset;
-
+    //Camera Smoothness
     [SerializeField]
     float smoothness = .3f;
-
+    //must Focus
     private bool mustFocus = false;
+    //Find Center screen based on vector 3
     private Vector3 centerScreen = new Vector3(.5f,.5f,0);
-    // Start is called before the first frame update
+    //find player 2d pos
     private Vector3 player2DPosition = new Vector3(0f, 0f, 0f);
+
+    //Start
     void Start()
     {
         
     }
 
-    // Update is called once per frame
+//Update
     void Update()
     {
+
+        //Get input from scroll wheel
         float scroll = Input.GetAxis("Mouse ScrollWheel");
+
+        //if scroll is either up or down zoom in and out
         if (scroll > 0.01f)
         {
             Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - .5f, .1f, 20f);
         }
+
         if (scroll < -0.01f)
         {
             Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + .5f, .1f, 20f);
         }
 
+        //IF follow camera follow player transform 
         if (focusStrategy == CameraFocusStrategy.SingleTargetFocusFollow)
         {
             if (player != null)
@@ -65,6 +82,7 @@ public class DollyCamera2D : MonoBehaviour
             return;
         }
 
+        //if camera reset reset position to position
         if (mustFocus)
         {
             if (focusStrategy == CameraFocusStrategy.SingleTargetFocusCenterReset)
@@ -82,6 +100,7 @@ public class DollyCamera2D : MonoBehaviour
             }
         }
         
+        //Check to see if player has moved and is out of bounds of parameters
         if (player != null)
         {
             Vector3 screenPos = Camera.main.WorldToScreenPoint(player.transform.position);
