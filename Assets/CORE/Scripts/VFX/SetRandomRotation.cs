@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteAlways]
 public class SetRandomRotation : MonoBehaviour
 {
     [SerializeField]
@@ -19,18 +20,21 @@ public class SetRandomRotation : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        float rotation = Random.RandomRange(minMax.x, minMax.y);
-        if (rotationAxis == Axis.Z)
+        if (!Application.isPlaying)
         {
-            transform.rotation = Quaternion.Euler(0, 0, rotation);
-        }
-        if (rotationAxis == Axis.X)
-        {
-            transform.rotation = Quaternion.Euler(rotation, 0, 0);
-        }
-        if (rotationAxis == Axis.Y)
-        {
-            transform.rotation = Quaternion.Euler(0, rotation, 0);
+            float rotation = Random.RandomRange(minMax.x, minMax.y);
+            if (rotationAxis == Axis.Z)
+            {
+                transform.rotation = Quaternion.Euler(0, 0, rotation);
+            }
+            if (rotationAxis == Axis.X)
+            {
+                transform.rotation = Quaternion.Euler(rotation, 0, 0);
+            }
+            if (rotationAxis == Axis.Y)
+            {
+                transform.rotation = Quaternion.Euler(0, rotation, 0);
+            }
         }
     }
 

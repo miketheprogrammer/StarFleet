@@ -7,85 +7,78 @@ using Unity.Netcode;
 using Core.ShipComponents;
 
 
-
-//PlayerController Network inputs using INetwork Serializable
 struct PlayerControllerNetworkedInputs : INetworkSerializable
 {
-    //Get public vectors for move and mouse world coords, yaw and firing yes or no
     public Vector2 Move; // 0, 0
     public Vector3 MouseWorldCoordiates; // 0,0,0
     public float YawDirection; // -1 or 1 or 0;
-    public bool firing;
+    public bool fire0;
+    public bool fire1;
 
     // INetworkSerializable
-    //serialize the inputs or all those inputs
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         serializer.SerializeValue(ref Move);
         serializer.SerializeValue(ref MouseWorldCoordiates);
         serializer.SerializeValue(ref YawDirection);
-        serializer.SerializeValue(ref firing);
+        serializer.SerializeValue(ref fire0);
+        serializer.SerializeValue(ref fire1);
 
     }
+
+    public static void Reset(out PlayerControllerNetworkedInputs inputs)
+    {
+        inputs.Move = Vector2.zero;
+        inputs.MouseWorldCoordiates = Vector3.zero;
+        inputs.YawDirection = 0f;
+        inputs.fire0 = false;
+        inputs.fire1 = false;
+    }
+    // ~INetworkSerializable
 }
 
-
-//Component Type PlayerController is NetworkBehaviour
 public class PlayerController : NetworkBehaviour
 {
+    #region Variables
     [Header("VARIABLES")]
-    [SerializeField]
-    public float velocity = 5f;
-    [SerializeField]
-    public float rotationSpeed = 5f;
-    [SerializeField]
-    public float yawRate;
+    [SerializeField] public float velocity = 5f;
+    [SerializeField] public float rotationSpeed = 5f;
+    [SerializeField] public float yawRate;
 
     [Header("Ship")]
     [SerializeField]
     Chassis chassis;
-
     [Header("SHIP STATS")]
-    [SerializeField] 
-    public float HP = 10f;
-    [SerializeField] 
-    public float HPMax = 10f;
-    [SerializeField] 
-    public float Shield = 10;
-    [SerializeField] 
-    public float MaxShield = 10;
+
+    [SerializeField] public float HP = 10f;
+    [SerializeField] public float HPMax = 10f;
+    [SerializeField] public float Shield = 10;
+    [SerializeField] public float MaxShield = 10;
 
     [Header("INPUT VECTORS")]
-    [SerializeField] 
-    Vector3 move;
-    [SerializeField] 
-    Vector3 yaw;
+    [SerializeField] Vector3 move;
+    [SerializeField] Vector3 yaw;
     Rigidbody prb;
 
     [Header("GUI ASSETS")]
-    [SerializeField]
-    Slider hpslider;
-    [SerializeField]
-    Slider shieldslider;
+    [SerializeField] Slider hpslider;
+    [SerializeField] Slider shieldslider;
 
     [Header("VFX Control")]
-    [SerializeField]
-    VisualEffect thrusterVFX;
-    [SerializeField]
-    VisualEffect thrusterSparksVFX;
+    [SerializeField] VisualEffect thrusterVFX;
+    [SerializeField] VisualEffect thrusterSparksVFX;
 
     [Header("Ship Spawn Debug")]
-    [SerializeField]
-    GameObject ShipToSpawn;
+    [SerializeField] GameObject ShipToSpawn;
 
-
+    //
     //NetworkVariables
-    PlayerControllerNetworkedInputs networkedInputs = new PlayerControllerNetworkedInputs();
+    [SerializeField] PlayerControllerNetworkedInputs networkedInputs = new PlayerControllerNetworkedInputs();
+    [SerializeField] PlayerControllerNetworkedInputs receivedNetworkedInputs = new PlayerControllerNetworkedInputs();
 
     private DollyCamera2D dollyCamera;
 
     public NetworkVariable<ulong> ChassisNetworkId = new NetworkVariable<ulong>();
-
     public NetworkVariable<bool> Fire0 = new NetworkVariable<bool>(
         default,
         NetworkVariableBase.DefaultReadPerm, // Everyone
@@ -97,21 +90,16 @@ public class PlayerController : NetworkBehaviour
         NetworkVariableWritePermission.Owner);
 
 
+    #endregion
+
     public void OnChassisNetworkIdChanged(ulong previous, ulong current)
     {
         AquireShip(current);
     }
 
-    public void OnFire0Changed(bool previous, bool current)
-    {
-    }
-
-
-    #region Start
     void Start()
     {
     }
-    #endregion
 
     public override void OnNetworkSpawn()
     {
@@ -121,7 +109,6 @@ public class PlayerController : NetworkBehaviour
             RequestShipSpawnServerRpc();
         }
         ChassisNetworkId.OnValueChanged += OnChassisNetworkIdChanged;
-        Fire0.OnValueChanged += OnFire0Changed;
         AquireShip(ChassisNetworkId.Value);
     }
 
@@ -129,7 +116,6 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnNetworkDespawn();
         ChassisNetworkId.OnValueChanged -= OnChassisNetworkIdChanged;
-        Fire0.OnValueChanged -= OnFire0Changed;
     }
 
     private void Update()
@@ -216,22 +202,24 @@ public class PlayerController : NetworkBehaviour
             if (Input.GetMouseButton(0))
             {
                 Fire0.Value = true;
+                networkedInputs.fire0 = true;
             } else
             {
                 Fire0.Value = false;
+                networkedInputs.fire0 = false;
             }
 
             if (Input.GetMouseButton(1))
             {
                 Fire1.Value = true;
+                networkedInputs.fire1 = true;
+                
             }
             else
             {
                 Fire1.Value = false;
+                networkedInputs.fire1 = false;
             }
-
-
-           
 
             if (Input.GetKeyDown(KeyCode.Backspace))
             {
@@ -246,6 +234,7 @@ public class PlayerController : NetworkBehaviour
     #region FixedUpdate
     void FixedUpdate()
     {
+        
         if (chassis == null)
         {
             return;
@@ -255,7 +244,7 @@ public class PlayerController : NetworkBehaviour
         //{
             #region Make Ship Move
             //Move ship based on inputs and rotation based on yaw 
-            Debug.Log("Apply Thrust " + NetworkObject.NetworkObjectId);
+            //Debug.Log("Apply Thrust " + NetworkObject.NetworkObjectId);
             chassis.cpu.ApplyThrust(networkedInputs.Move);
             chassis.cpu.ApplyTorque(networkedInputs.YawDirection);
             #endregion
@@ -278,15 +267,17 @@ public class PlayerController : NetworkBehaviour
             chassis.cpu.ApplyTurretRotation(networkedInputs.MouseWorldCoordiates);
         //}
 
-        if (Fire0.Value)
+        if (receivedNetworkedInputs.fire0)
         {
             chassis.cpu.FireHardpoints(0);
         }
 
-        if (Fire1.Value)
+        if (receivedNetworkedInputs.fire1)
         {
             chassis.cpu.FireHardpoints(1);
         }
+
+        //receivedNetworkedInputs.Reset();
 
     }
     #endregion
@@ -297,14 +288,18 @@ public class PlayerController : NetworkBehaviour
         networkedInputs.Move = inputs.Move;
         networkedInputs.MouseWorldCoordiates = inputs.MouseWorldCoordiates;
         networkedInputs.YawDirection = inputs.YawDirection;
+        networkedInputs.fire0 = inputs.fire0;
+        networkedInputs.fire1 = inputs.fire1;
     }
 
     [ClientRpc(Delivery = RpcDelivery.Unreliable)]
     void SendNetworkedInputsToClientClientRpc(PlayerControllerNetworkedInputs inputs, ClientRpcParams clientrRpcParams = default)
     {
-        networkedInputs.Move = inputs.Move;
-        networkedInputs.MouseWorldCoordiates = inputs.MouseWorldCoordiates;
-        networkedInputs.YawDirection = inputs.YawDirection;
+        receivedNetworkedInputs.Move = inputs.Move;
+        receivedNetworkedInputs.MouseWorldCoordiates = inputs.MouseWorldCoordiates;
+        receivedNetworkedInputs.YawDirection = inputs.YawDirection;
+        receivedNetworkedInputs.fire0 = inputs.fire0;
+        receivedNetworkedInputs.fire1 = inputs.fire1;
     }
 
     [ServerRpc]
@@ -350,3 +345,26 @@ public class PlayerController : NetworkBehaviour
 
 //CODE BY GRVBBS & HERNANDEZ
 //2022 MAGKORE GAME STUDIOS
+
+
+
+
+
+// Client logs in to server
+// Server spawns player object ( player has ownership )
+// Player object requests spawn of character via rpc ( in our case is the chassis )
+// Server creates chassis and spawns across all clients
+// Server tells player via rpc that it has spawned the characters
+// Player sends keyboard/mouse/joystick input to server via rpc or synced struct (#1)
+// Server recognizes input, validates, runs anti cheat Server runs simulation
+// Server sends updates of ship positions to all clients.
+
+// Adding in prediction
+// @ #1
+// Client executes inputs using the same simulation code the server would for his own character
+// Client displayes that
+
+// Adding in reconcilation
+// Client stores last 100 frames of input
+// Client receives server update
+// Client interpolates predicted position, and server position at Time T
